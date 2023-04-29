@@ -1,0 +1,62 @@
+module Test.JuvixUnit;
+
+open import Stdlib.Prelude;
+import Data.Eq as Eq;
+open Eq using {Eq;eq};
+
+type Assertion :=
+  | pass : Assertion
+  | fail : String -> Assertion;
+
+type Test :=
+  | testCase : String -> Assertion -> Test;
+
+type TestSuite :=
+  | testSuite : String -> List Test -> TestSuite;
+
+runTests : List Test -> IO;
+runTests :=
+  let
+    showAssertion : Assertion -> String;
+    showAssertion pass := "OK";
+    showAssertion (fail msg) := "FAIL: " ++str msg;
+    runTest : Test -> IO;
+    runTest (testCase label a) :=
+      printStringLn (label ++str "\t\t" ++str showAssertion a);
+  in foldr
+    λ {
+      | t acc := runTest t >> acc
+    }
+    (printString "");
+
+runTestSuite : TestSuite -> IO;
+runTestSuite (testSuite name ts) :=
+  printStringLn ("Test suite '" ++str name ++str "'")
+    >> runTests ts
+    >> printStringLn
+      ("All tests from test suite '"
+        ++str name
+        ++str "' complete");
+
+failWhen : String -> Bool -> Assertion;
+failWhen msg b := if b (fail msg) pass;
+
+failUnless : String -> Bool -> Assertion;
+failUnless msg b := failWhen msg (not b);
+
+assertTrue : String -> Bool -> Assertion;
+assertTrue := failUnless;
+
+assertFalse : String -> Bool -> Assertion;
+assertFalse := failWhen;
+
+assertJust : {A : Type} -> String -> Maybe A -> Assertion;
+assertJust msg := maybe (fail msg) (const pass);
+
+assertNothing :
+  {A : Type} -> (A -> String) -> Maybe A -> Assertion;
+assertNothing mkMsg := maybe pass (fail ∘ mkMsg);
+
+assertEqual :
+  {A : Type} -> Eq A -> String -> A -> A -> Assertion;
+assertEqual (eq ==) msg a1 a2 := failUnless msg (== a1 a2);
