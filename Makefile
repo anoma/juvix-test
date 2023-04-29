@@ -7,8 +7,13 @@ deps/traits:
 
 deps: deps/traits
 
+build/Example: Example.juvix $(wildcard ./**/*.juvix) deps
+	@mkdir -p build/
+	juvix compile -o build/Example Example.juvix
+
 .PHONY : test
-test: deps
+test: build/Example
+	./build/Example
 
 .PHONY: clean-build
 clean-build:
