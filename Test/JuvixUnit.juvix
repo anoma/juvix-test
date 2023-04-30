@@ -1,18 +1,31 @@
 module Test.JuvixUnit;
 
 open import Stdlib.Prelude;
+
 import Data.Eq as Eq;
 open Eq using {Eq;eq};
+
+import Stdlib.Debug.Fail as Fail;
 
 type Assertion :=
   | pass : Assertion
   | fail : String -> Assertion;
+
+isFail : Assertion -> Bool;
+isFail pass := false;
+isFail (fail _) := true;
 
 type Test :=
   | testCase : String -> Assertion -> Test;
 
 type TestSuite :=
   | testSuite : String -> List Test -> TestSuite;
+
+testAssertion : Test -> Assertion;
+testAssertion (testCase _ a) := a;
+
+anyFail : TestSuite -> Bool;
+anyFail (testSuite _ ts) := any (isFail ∘ testAssertion) ts;
 
 runTests : List Test -> IO;
 runTests :=
@@ -30,13 +43,17 @@ runTests :=
     (printString "");
 
 runTestSuite : TestSuite -> IO;
-runTestSuite (testSuite name ts) :=
+runTestSuite s@(testSuite name ts) :=
   printStringLn ("Test suite '" ++str name ++str "'")
     >> runTests ts
     >> printStringLn
       ("All tests from test suite '"
         ++str name
-        ++str "' complete");
+        ++str "' complete")
+    >> if
+      (anyFail s)
+      (Fail.fail "Suite failed")
+      (printStringLn "Suite passed");
 
 failWhen : String -> Bool -> Assertion;
 failWhen msg b := if b (fail msg) pass;
