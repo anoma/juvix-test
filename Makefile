@@ -1,11 +1,12 @@
 
 all: test
 
-deps/traits:
+deps/stdlib:
 	@mkdir -p deps/
-	@git clone --branch v0.1.0 --depth 1 https://github.com/paulcadman/traits.git deps/traits
+	@git clone https://github.com/anoma/juvix-stdlib.git deps/stdlib
+	@git -C deps/stdlib checkout caffc3b9bfde589e5ef3fca3f835200ce78ab312
 
-deps: deps/traits
+deps: deps/stdlib
 
 build/Example: Example.juvix $(wildcard ./**/*.juvix) deps
 	@mkdir -p build/

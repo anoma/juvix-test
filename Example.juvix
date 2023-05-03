@@ -4,12 +4,9 @@ open import Stdlib.Prelude;
 open import Test.JuvixUnit;
 open import Stdlib.Data.Nat.Ord;
 
-import Data.Eq as Eq;
-open Eq using {Eq};
-
 tests : List Test;
 tests :=
-  testCase "1 == 1" (assertEqual Eq.nat "1 /= 1" 1 1)
+  testCase "1 == 1" (assertEqual NatTraits.Eq "1 /= 1" 1 1)
     :: testCase "not (1 == 1)" (assertFalse "1 == 1" (1 == 1))
     :: nil;
 

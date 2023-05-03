@@ -12,12 +12,9 @@ module Example;
 open import Stdlib.Prelude;
 open import Test.JuvixUnit;
 
-import Data.Eq as Eq;
-open Eq using {Eq};
-
 tests : List Test;
 tests :=
-  testCase "1 == 1" (assertEqual Eq.nat "1 /= 1" 1 1)
+  testCase "1 == 1" (assertEqual NatTraits.Eq "1 /= 1" 1 1)
     :: nil;
 
 main : IO;

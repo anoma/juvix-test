@@ -2,9 +2,6 @@ module Test.JuvixUnit;
 
 open import Stdlib.Prelude;
 
-import Data.Eq as Eq;
-open Eq using {Eq;eq};
-
 import Stdlib.Debug.Fail as Fail;
 
 type Assertion :=
@@ -76,4 +73,4 @@ assertNothing mkMsg := maybe pass (fail ∘ mkMsg);
 
 assertEqual :
   {A : Type} -> Eq A -> String -> A -> A -> Assertion;
-assertEqual (eq ==) msg a1 a2 := failUnless msg (== a1 a2);
+assertEqual (mkEq ==) msg a1 a2 := failUnless msg (== a1 a2);
