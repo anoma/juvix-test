@@ -1,8 +1,8 @@
 module Example;
 
-open import Stdlib.Prelude;
-open import Test.JuvixUnit;
-open import Stdlib.Data.Nat.Ord;
+import Stdlib.Prelude open;
+import Test.JuvixUnit open;
+import Stdlib.Data.Nat.Ord open;
 
 tests : List Test;
 tests :=
