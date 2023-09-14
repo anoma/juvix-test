@@ -1,14 +1,6 @@
-
 all: test
 
-deps/stdlib:
-	@mkdir -p deps/
-	@git clone https://github.com/anoma/juvix-stdlib.git deps/stdlib
-	@git -C deps/stdlib checkout e94ea21027ffa63929ab67e12e917b23792b8c57
-
-deps: deps/stdlib
-
-build/Example: Example.juvix $(wildcard ./**/*.juvix) deps
+build/Example: Example.juvix $(wildcard ./**/*.juvix)
 	@mkdir -p build/
 	juvix compile -o build/Example Example.juvix
 

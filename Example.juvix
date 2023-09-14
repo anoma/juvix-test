@@ -4,11 +4,13 @@ import Stdlib.Prelude open;
 import Test.JuvixUnit open;
 import Stdlib.Data.Nat.Ord open;
 
-tests : List Test;
-tests :=
-  testCase "1 == 1" (assertEqual NatTraits.Eq "1 /= 1" 1 1)
-    :: testCase "not (1 == 1)" (assertFalse "1 == 1" (1 == 1))
-    :: nil;
+tests : List Test :=
+  [testCase
+    "1 == 1"
+    (assertEqual eqNatI "1 /= 1" 1 1); testCase
+    "not (1 == 1)"
+    (assertFalse "1 == 1" (1 == 1))];
 
-main : IO;
-main := runTestSuite (testSuite "Example" tests);
+main : IO :=
+  runTestSuite
+    (testSuite (name := "Example"; tests := tests));

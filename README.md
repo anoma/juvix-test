@@ -9,16 +9,13 @@ The following module defines a simple test suite:
 ```
 module Example;
 
-open import Stdlib.Prelude;
-open import Test.JuvixUnit;
+import Stdlib.Prelude open;
+import Test.JuvixUnit open;
 
-tests : List Test;
-tests :=
-  testCase "1 == 1" (assertEqual NatTraits.Eq "1 /= 1" 1 1)
-    :: nil;
+tests : List Test :=
+  [testCase "1 == 1" (assertEqual eqNatI "1 /= 1" 1 1)];
 
-main : IO;
-main := runTestSuite (testSuite "Example" tests);
+main : IO := runTestSuite (testSuite "Example" tests);
 ```
 
 Compile and run the test suite:

@@ -5,69 +5,68 @@ import Stdlib.Prelude open;
 import Stdlib.Debug.Fail as Fail;
 
 type Assertion :=
-  | pass : Assertion
-  | fail : String -> Assertion;
+  | pass
+  | fail String;
 
-isFail : Assertion -> Bool;
-isFail pass := false;
-isFail (fail _) := true;
+isFail : Assertion -> Bool
+  | pass := false
+  | (fail _) := true;
 
 type Test :=
-  | testCase : String -> Assertion -> Test;
+  testCase {
+    name : String;
+    assertion : Assertion
+  };
 
 type TestSuite :=
-  | testSuite : String -> List Test -> TestSuite;
+  testSuite {
+    name : String;
+    tests : List Test
+  };
 
-testAssertion : Test -> Assertion;
-testAssertion (testCase _ a) := a;
+anyFail (suite : TestSuite) : Bool :=
+  any (isFail ∘ Test.assertion) (TestSuite.tests suite);
 
-anyFail : TestSuite -> Bool;
-anyFail (testSuite _ ts) := any (isFail ∘ testAssertion) ts;
-
-runTests : List Test -> IO;
-runTests :=
+runTests : List Test -> IO :=
   let
-    showAssertion : Assertion -> String;
-    showAssertion pass := "OK";
-    showAssertion (fail msg) := "FAIL: " ++str msg;
-    runTest : Test -> IO;
-    runTest (testCase label a) :=
-      printStringLn (label ++str "\t\t" ++str showAssertion a);
+    showAssertion : Assertion -> String
+      | pass := "OK"
+      | (fail msg) := "FAIL: " ++str msg;
+    runTest (t : Test) : IO :=
+      printStringLn
+        (Test.name t
+          ++str "\t\t"
+          ++str showAssertion (Test.assertion t));
   in foldr λ {t acc := runTest t >> acc} (printString "");
 
-runTestSuite : TestSuite -> IO;
-runTestSuite s@(testSuite name ts) :=
-  printStringLn ("Test suite '" ++str name ++str "'")
-    >> runTests ts
+runTestSuite (suite : TestSuite) : IO :=
+  printStringLn
+      ("Test suite '" ++str TestSuite.name suite ++str "'")
+    >> runTests (TestSuite.tests suite)
     >> printStringLn
       ("All tests from test suite '"
-        ++str name
+        ++str TestSuite.name suite
         ++str "' complete")
     >> if
-      (anyFail s)
+      (anyFail suite)
       (Fail.fail "Suite failed")
       (printStringLn "Suite passed");
 
-failWhen : String -> Bool -> Assertion;
-failWhen msg b := if b (fail msg) pass;
+failWhen (msg : String) (b : Bool) : Assertion :=
+  if b (fail msg) pass;
 
-failUnless : String -> Bool -> Assertion;
-failUnless msg b := failWhen msg (not b);
+failUnless (msg : String) (b : Bool) : Assertion :=
+  failWhen msg (not b);
 
-assertTrue : String -> Bool -> Assertion;
-assertTrue := failUnless;
+assertTrue : String -> Bool -> Assertion := failUnless;
 
-assertFalse : String -> Bool -> Assertion;
-assertFalse := failWhen;
+assertFalse : String -> Bool -> Assertion := failWhen;
 
-assertJust : {A : Type} -> String -> Maybe A -> Assertion;
-assertJust msg := maybe (fail msg) (const pass);
+assertJust {A} (msg : String) : Maybe A -> Assertion :=
+  maybe (fail msg) (const pass);
 
-assertNothing :
-  {A : Type} -> (A -> String) -> Maybe A -> Assertion;
-assertNothing mkMsg := maybe pass (fail ∘ mkMsg);
+assertNothing {A} (mkMsg : A -> String)
+  : Maybe A -> Assertion := maybe pass (fail ∘ mkMsg);
 
-assertEqual :
-  {A : Type} -> Eq A -> String -> A -> A -> Assertion;
-assertEqual (mkEq ==) msg a1 a2 :=
-  failUnless msg (== a1 a2);
+assertEqual {A} (eqI : Eq A) (msg : String) (a1 a2 : A)
+  : Assertion := failUnless msg (Eq.eq {{eqI}} a1 a2);
