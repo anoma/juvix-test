@@ -68,5 +68,5 @@ assertJust {A} (msg : String) : Maybe A -> Assertion :=
 assertNothing {A} (mkMsg : A -> String)
   : Maybe A -> Assertion := maybe pass (fail ∘ mkMsg);
 
-assertEqual {A} (eqI : Eq A) (msg : String) (a1 a2 : A)
-  : Assertion := failUnless msg (Eq.eq {{eqI}} a1 a2);
+assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A)
+  : Assertion := failUnless msg (Eq.eq a1 a2);

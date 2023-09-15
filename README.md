@@ -13,7 +13,7 @@ import Stdlib.Prelude open;
 import Test.JuvixUnit open;
 
 tests : List Test :=
-  [testCase "1 == 1" (assertEqual eqNatI "1 /= 1" 1 1)];
+  [testCase "1 == 1" (assertEqual "1 /= 1" 1 1)];
 
 main : IO := runTestSuite (testSuite "Example" tests);
 ```

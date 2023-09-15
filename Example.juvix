@@ -7,7 +7,7 @@ import Stdlib.Data.Nat.Ord open;
 tests : List Test :=
   [testCase
     "1 == 1"
-    (assertEqual eqNatI "1 /= 1" 1 1); testCase
+    (assertEqual "1 /= 1" 1 1); testCase
     "not (1 == 1)"
     (assertFalse "1 == 1" (1 == 1))];
 
