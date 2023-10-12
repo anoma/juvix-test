@@ -49,11 +49,11 @@ runTestSuite (suite : TestSuite) : IO :=
         ++str "' complete")
     >> if
       (anyFail suite)
-      (Fail.fail "Suite failed")
+      (Fail.failwith "Suite failed")
       (printStringLn "Suite passed");
 
 failWhen (msg : String) (b : Bool) : Assertion :=
-  if b (fail msg) pass;
+  if b (Fail.failwith msg) pass;
 
 failUnless (msg : String) (b : Bool) : Assertion :=
   failWhen msg (not b);
@@ -63,10 +63,10 @@ assertTrue : String -> Bool -> Assertion := failUnless;
 assertFalse : String -> Bool -> Assertion := failWhen;
 
 assertJust {A} (msg : String) : Maybe A -> Assertion :=
-  maybe (fail msg) (const pass);
+  maybe (Fail.failwith msg) (const pass);
 
 assertNothing {A} (mkMsg : A -> String)
-  : Maybe A -> Assertion := maybe pass (fail ∘ mkMsg);
+  : Maybe A -> Assertion := maybe pass (Fail.failwith ∘ mkMsg);
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A)
   : Assertion := failUnless msg (Eq.eq a1 a2);

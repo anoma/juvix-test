@@ -2,7 +2,6 @@ module Example;
 
 import Stdlib.Prelude open;
 import Test.JuvixUnit open;
-import Stdlib.Data.Nat.Ord open;
 
 tests : List Test :=
   [testCase
