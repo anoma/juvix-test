@@ -1,7 +1,0 @@
-dependencies:
-- git:
-    url: https://github.com/anoma/juvix-stdlib
-    ref: 8493ff47a0c2fad4542c8e75f5736060ae7da0a4
-    name: stdlib
-name: test
-version: 0.6.1
