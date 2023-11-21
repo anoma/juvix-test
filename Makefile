@@ -1,12 +1,17 @@
 all: test
 
-build/Example: Example.juvix $(wildcard ./**/*.juvix)
+build/TestFail: tests/TestFail.juvix $(wildcard ./**/*.juvix)
 	@mkdir -p build/
-	juvix compile -o build/Example Example.juvix
+	juvix compile -o build/TestFail tests/TestFail.juvix
+
+build/TestPass: tests/TestPass.juvix $(wildcard ./**/*.juvix)
+	@mkdir -p build/
+	juvix compile -o build/TestPass tests/TestPass.juvix
 
 .PHONY : test
-test: build/Example
-	./build/Example
+test: build/TestFail build/TestPass
+	tests/check_output.sh "./build/TestPass" expect_success "OK,Suite passed"
+	tests/check_output.sh "./build/TestFail" expect_fail "FAIL,OK,Suite failed"
 
 .PHONY: clean-build
 clean-build:
