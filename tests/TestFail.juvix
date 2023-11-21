@@ -1,0 +1,12 @@
+module TestFail;
+
+import Stdlib.Prelude open;
+import Test.JuvixUnit open;
+
+main : IO :=
+  runTestSuite
+    (testSuite
+      (name := "TestFail";
+      tests := [ testCase "2 == 1" (assertEqual "2 /= 1" 2 1)
+               ; testCase "1 == 1" (assertEqual "1 /= 1" 1 1)
+               ]));

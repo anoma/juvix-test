@@ -1,6 +1,6 @@
 module Test.JuvixUnit;
 
-import Stdlib.Prelude open;
+import Stdlib.Prelude open hiding {fail};
 
 import Stdlib.Debug.Fail as Fail;
 
@@ -49,7 +49,7 @@ runTestSuite (suite : TestSuite) : IO :=
         ++str "' complete")
     >> if
       (anyFail suite)
-      (Fail.fail "Suite failed")
+      (Fail.failwith "Suite failed")
       (printStringLn "Suite passed");
 
 failWhen (msg : String) (b : Bool) : Assertion :=
@@ -69,4 +69,4 @@ assertNothing {A} (mkMsg : A -> String)
   : Maybe A -> Assertion := maybe pass (fail ∘ mkMsg);
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A)
-  : Assertion := failUnless msg (Eq.eq a1 a2);
+  : Assertion := failUnless msg (a1 == a2);

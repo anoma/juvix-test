@@ -26,4 +26,7 @@ $ ./Example
 Test suite 'Example'
 1 == 1		OK
 All tests from test suite 'Example' complete
+Suite passed
 ```
+
+For more examples see [Example.juvix](Example.juvix) or the [test suite](./tests).
