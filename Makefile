@@ -17,9 +17,10 @@ example: build/Example
 	./build/Example
 
 .PHONY : test
-test: build/TestFail build/TestPass
+test: build/TestFail build/TestPass build/Example
 	tests/check_output.sh "./build/TestPass" expect_success "OK,Suite passed"
 	tests/check_output.sh "./build/TestFail" expect_fail "FAIL,OK,Suite failed"
+	tests/check_output.sh "./build/Example" expect_success "OK,Suite passed"
 
 .PHONY: clean-build
 clean-build:
