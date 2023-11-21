@@ -15,7 +15,7 @@ EXPECT_SUCCESS="$2"
 IFS=',' read -r -a regex_list <<< "$3"
 
 # Execute the command and store both stdout and stderr in the output
-output=$($COMMAND 2>&1)
+output=$(stdbuf -oL $COMMAND 2>&1)
 exit_code=$?
 
 # Check the exit code
