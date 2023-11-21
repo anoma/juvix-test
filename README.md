@@ -26,4 +26,5 @@ $ ./Example
 Test suite 'Example'
 1 == 1		OK
 All tests from test suite 'Example' complete
+Suite passed
 ```
