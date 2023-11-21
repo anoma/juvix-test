@@ -33,6 +33,8 @@ failed=0
 for regex in "${regex_list[@]}"; do
     if [[ ! $output =~ $regex ]]; then
         echo "$COMMAND: No match found for regex: $regex"
+        echo "output:"
+        echo "$output"
         failed=1
     fi
 done
