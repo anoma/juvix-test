@@ -69,4 +69,4 @@ assertNothing {A} (mkMsg : A -> String)
   : Maybe A -> Assertion := maybe pass (fail ∘ mkMsg);
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A)
-  : Assertion := failUnless msg (Eq.eq a1 a2);
+  : Assertion := failUnless msg (a1 == a2);
