@@ -28,3 +28,5 @@ Test suite 'Example'
 All tests from test suite 'Example' complete
 Suite passed
 ```
+
+For more examples see [Example.juvix](Example.juvix) or the [test suite](./tests).
