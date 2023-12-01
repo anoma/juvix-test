@@ -28,7 +28,8 @@ clean-build:
 
 .PHONY: clean-deps
 clean-deps:
-	@rm -rf deps/
+	@juvix clean
+	@(cd tests && exec juvix clean)
 
 .PHONY: clean
 clean: clean-deps clean-build
