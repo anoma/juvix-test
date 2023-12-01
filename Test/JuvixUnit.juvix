@@ -1,7 +1,6 @@
 module Test.JuvixUnit;
 
-import Stdlib.Prelude open hiding {fail};
-
+import Test.Prelude open;
 import Stdlib.Debug.Fail as Fail;
 
 type Assertion :=

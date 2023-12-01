@@ -1,9 +1,9 @@
 module Package;
 
-import PackageDescription.V1 open;
+import PackageDescription.V2 open;
 
 package : Package :=
   defaultPackage
     {name := "test";
-     version := mkVersion 0 7 0;
-     dependencies := [github "anoma" "juvix-stdlib" "v0.0.1"]};
+     version := mkVersion 0 8 0;
+     dependencies := [github "anoma" "juvix-stdlib" "v0.1.0"]};
