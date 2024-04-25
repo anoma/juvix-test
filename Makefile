@@ -2,15 +2,15 @@ all: test
 
 build/TestFail: tests/TestFail.juvix $(wildcard ./**/*.juvix)
 	@mkdir -p build/
-	juvix compile -o build/TestFail tests/TestFail.juvix
+	juvix compile native -o build/TestFail tests/TestFail.juvix
 
 build/TestPass: tests/TestPass.juvix $(wildcard ./**/*.juvix)
 	@mkdir -p build/
-	juvix compile -o build/TestPass tests/TestPass.juvix
+	juvix compile native -o build/TestPass tests/TestPass.juvix
 
 build/Example: Example.juvix $(wildcard ./**/*.juvix)
 	@mkdir -p build/
-	juvix compile -o build/Example Example.juvix
+	juvix compile native -o build/Example Example.juvix
 
 .PHONY : example
 example: build/Example
