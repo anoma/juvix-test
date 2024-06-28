@@ -24,7 +24,7 @@ type TestSuite :=
   };
 
 anyFail (suite : TestSuite) : Bool :=
-  any (isFail ∘ Test.assertion) (TestSuite.tests suite);
+  any (Test.assertion >> isFail) (TestSuite.tests suite);
 
 runTests : List Test -> IO :=
   let
@@ -36,17 +36,17 @@ runTests : List Test -> IO :=
         (Test.name t
           ++str "\t\t"
           ++str showAssertion (Test.assertion t));
-  in foldr λ {t acc := runTest t >> acc} (printString "");
+  in foldr λ {t acc := runTest t >>> acc} (printString "");
 
 runTestSuite (suite : TestSuite) : IO :=
   printStringLn
       ("Test suite '" ++str TestSuite.name suite ++str "'")
-    >> runTests (TestSuite.tests suite)
-    >> printStringLn
+    >>> runTests (TestSuite.tests suite)
+    >>> printStringLn
       ("All tests from test suite '"
         ++str TestSuite.name suite
         ++str "' complete")
-    >> if
+    >>> if
       (anyFail suite)
       (Fail.failwith "Suite failed")
       (printStringLn "Suite passed");
@@ -65,7 +65,7 @@ assertJust {A} (msg : String) : Maybe A -> Assertion :=
   maybe (fail msg) (const pass);
 
 assertNothing {A} (mkMsg : A -> String)
-  : Maybe A -> Assertion := maybe pass (fail ∘ mkMsg);
+  : Maybe A -> Assertion := maybe pass (mkMsg >> fail);
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A)
   : Assertion := failUnless msg (a1 == a2);
