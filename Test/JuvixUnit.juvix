@@ -1,6 +1,6 @@
 module Test.JuvixUnit;
 
-import Test.Prelude open;
+import Stdlib.Prelude open hiding {fail};
 import Stdlib.Debug.Fail as Fail;
 
 type Assertion :=
@@ -46,13 +46,13 @@ runTestSuite (suite : TestSuite) : IO :=
       ("All tests from test suite '"
         ++str TestSuite.name suite
         ++str "' complete")
-    >>> if
+    >>> ite
       (anyFail suite)
       (Fail.failwith "Suite failed")
       (printStringLn "Suite passed");
 
 failWhen (msg : String) (b : Bool) : Assertion :=
-  if b (fail msg) pass;
+  ite b (fail msg) pass;
 
 failUnless (msg : String) (b : Bool) : Assertion :=
   failWhen msg (not b);
