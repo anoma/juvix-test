@@ -3,7 +3,7 @@ module Example;
 import Stdlib.Prelude open;
 import Test.JuvixUnit open;
 
-headMay {A} : List A -> Maybe A := head nothing ∘ map just;
+headMay {A} : List A -> Maybe A := map just >> head nothing;
 
 tests : List Test :=
   [ testCase "1 == 1" (assertEqual "1 /= 1" 1 1)
