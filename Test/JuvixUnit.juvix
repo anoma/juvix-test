@@ -23,8 +23,7 @@ type TestSuite :=
     tests : List Test
   };
 
-anyFail (suite : TestSuite) : Bool :=
-  any (Test.assertion >> isFail) (TestSuite.tests suite);
+anyFail (suite : TestSuite) : Bool := any (Test.assertion >> isFail) (TestSuite.tests suite);
 
 runTests : List Test -> IO :=
   let
@@ -32,40 +31,25 @@ runTests : List Test -> IO :=
       | pass := "OK"
       | (fail msg) := "FAIL: " ++str msg;
     runTest (t : Test) : IO :=
-      printStringLn
-        (Test.name t
-          ++str "\t\t"
-          ++str showAssertion (Test.assertion t));
+      printStringLn (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t));
   in foldr λ {t acc := runTest t >>> acc} (printString "");
 
 runTestSuite (suite : TestSuite) : IO :=
-  printStringLn
-      ("Test suite '" ++str TestSuite.name suite ++str "'")
+  printStringLn ("Test suite '" ++str TestSuite.name suite ++str "'")
     >>> runTests (TestSuite.tests suite)
-    >>> printStringLn
-      ("All tests from test suite '"
-        ++str TestSuite.name suite
-        ++str "' complete")
-    >>> ite
-      (anyFail suite)
-      (Fail.failwith "Suite failed")
-      (printStringLn "Suite passed");
+    >>> printStringLn ("All tests from test suite '" ++str TestSuite.name suite ++str "' complete")
+    >>> ite (anyFail suite) (Fail.failwith "Suite failed") (printStringLn "Suite passed");
 
-failWhen (msg : String) (b : Bool) : Assertion :=
-  ite b (fail msg) pass;
+failWhen (msg : String) (b : Bool) : Assertion := ite b (fail msg) pass;
 
-failUnless (msg : String) (b : Bool) : Assertion :=
-  failWhen msg (not b);
+failUnless (msg : String) (b : Bool) : Assertion := failWhen msg (not b);
 
 assertTrue : String -> Bool -> Assertion := failUnless;
 
 assertFalse : String -> Bool -> Assertion := failWhen;
 
-assertJust {A} (msg : String) : Maybe A -> Assertion :=
-  maybe (fail msg) (const pass);
+assertJust {A} (msg : String) : Maybe A -> Assertion := maybe (fail msg) (const pass);
 
-assertNothing {A} (mkMsg : A -> String)
-  : Maybe A -> Assertion := maybe pass (mkMsg >> fail);
+assertNothing {A} (mkMsg : A -> String) : Maybe A -> Assertion := maybe pass (mkMsg >> fail);
 
-assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A)
-  : Assertion := failUnless msg (a1 == a2);
+assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 == a2);

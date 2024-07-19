@@ -8,17 +8,11 @@ headMay {A} : List A -> Maybe A := map just >> head nothing;
 tests : List Test :=
   [ testCase "1 == 1" (assertEqual "1 /= 1" 1 1)
   ; testCase "[1] == [1]" (assertEqual "[1] /= [1]" [1] [1])
-  ; testCase
-    "length [1] == 1"
-    (assertTrue "length [1] /= 1" (length [1] == 1))
+  ; testCase "length [1] == 1" (assertTrue "length [1] /= 1" (length [1] == 1))
   ; testCase
     "headMay [] is nothing"
-    (assertNothing
-      λ {xs := "expected nothing, got: " ++str Show.show xs}
-      (headMay {Nat} []))
-  ; testCase
-    "headMay [1] is just"
-    (assertJust "expected just, got nothing" (headMay [1]))
+    (assertNothing λ {xs := "expected nothing, got: " ++str Show.show xs} (headMay {Nat} []))
+  ; testCase "headMay [1] is just" (assertJust "expected just, got nothing" (headMay [1]))
   ];
 
 main : IO := runTestSuite (testSuite "Example" tests);
