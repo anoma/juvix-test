@@ -54,7 +54,7 @@ assertNothing {A} (mkMsg : A -> String) : Maybe A -> Assertion := maybe pass (mk
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 == a2);
 
-assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 >= a2);
+assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 > a2);
 
 assertGreaterEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
   failUnless msg (a1 >= a2);
@@ -63,24 +63,30 @@ assertLess {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless ms
 
 assertLessEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 <= a2);
 
-mkExpectMsg {A} {{Show A}} (expected actual : A) (msg : String) : String :=
-  "\nExpected " ++str Show.show expected ++str "\nto be " ++str msg ++str Show.show actual;
+mkExpectMsg {A} {{Show A}} (actual : A) (msg : String) (expected : A) : String :=
+  "Expected " ++str Show.show actual ++str msg ++str Show.show expected;
 
-expectTrue (actual : Bool) : Assertion := assertTrue (mkExpectMsg true actual "") actual;
+expectTrue (actual : Bool) : Assertion := assertTrue (mkExpectMsg actual " to be " true) actual;
 
-expectFalse (actual : Bool) : Assertion := assertFalse (mkExpectMsg false actual "") actual;
+expectFalse (actual : Bool) : Assertion := assertFalse (mkExpectMsg actual " to be " false) actual;
 
 expectEqual {A} {{Eq A}} {{Show A}} (expected actual : A) : Assertion :=
-  assertEqual (mkExpectMsg expected actual "equal to ") expected actual;
+  assertEqual (mkExpectMsg actual " == " expected) expected actual;
 
 expectGreater {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
-  assertGreater (mkExpectMsg expected actual "greater than ") expected actual;
+  assertGreater (mkExpectMsg actual " > " expected) expected actual;
 
 expectGreaterEqual {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
-  assertGreaterEqual (mkExpectMsg expected actual "greater than or equal to ") expected actual;
+  assertGreaterEqual (mkExpectMsg actual " >= " expected) expected actual;
 
 expectLess {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
-  assertLess (mkExpectMsg expected actual "less than ") expected actual;
+  assertLess (mkExpectMsg actual " < " expected) expected actual;
 
 expectLessEqual {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
-  assertLessEqual (mkExpectMsg expected actual "less than or equal to ") expected actual;
+  assertLessEqual (mkExpectMsg actual " <= " expected) expected actual;
+
+expectJust {A} {{Show A}} (expected : A) (actual : Maybe A) : Assertion :=
+  assertJust (mkExpectMsg "nothing" " to be " ("just " ++str Show.show expected)) actual;
+
+expectNothing {A} {{Show A}} (actual : Maybe A) : Assertion :=
+  assertNothing λ {x := mkExpectMsg ("just " ++str Show.show x) " to be " "nothing"} actual;
