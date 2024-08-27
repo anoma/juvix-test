@@ -83,4 +83,4 @@ expectLess {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
   assertLess (mkExpectMsg expected actual "less than ") expected actual;
 
 expectLessEqual {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
-  assertLessEqual (mkExpectMsg expected actual "greater than or equal to ") expected actual;
+  assertLessEqual (mkExpectMsg expected actual "less than or equal to ") expected actual;
