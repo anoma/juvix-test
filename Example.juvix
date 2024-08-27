@@ -7,7 +7,19 @@ headMay {A} : List A -> Maybe A := map just >> head nothing;
 
 tests : List Test :=
   [ testCase "1 == 1" (assertEqual "1 /= 1" 1 1)
+  ; testCase "2 > 1" (assertGreater "2 <= 1" 2 1)
+  ; testCase "2 >= 1" (assertGreaterEqual "2 < 1" 2 1)
+  ; testCase "1 >= 1" (assertGreaterEqual "1 < 1" 1 1)
+  ; testCase "1 < 2" (assertLess "1 >= 2" 1 2)
+  ; testCase "1 <= 2" (assertLessEqual "1 > 2" 1 2)
+  ; testCase "1 <= 1" (assertLessEqual "1 > 1" 1 1)
   ; testCase "[1] == [1]" (assertEqual "[1] /= [1]" [1] [1])
+  ; testCase "[2] > [1]" (assertGreater "2 <= 1" [2] [1])
+  ; testCase "[2] >= [1]" (assertGreaterEqual "2 < 1" [2] [1])
+  ; testCase "[1] >= [1]" (assertGreaterEqual "1 < 1" [1] [1])
+  ; testCase "[1] < [2]" (assertLess "[1] >= [2]" [1] [2])
+  ; testCase "[1] <= [2]" (assertLessEqual "[1] > [2]" [1] [2])
+  ; testCase "[1] <= [1]" (assertLessEqual "[1] > [1]" [1] [1])
   ; testCase "length [1] == 1" (assertTrue "length [1] /= 1" (length [1] == 1))
   ; testCase
     "headMay [] is nothing"
