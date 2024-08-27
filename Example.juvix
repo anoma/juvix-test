@@ -6,25 +6,23 @@ import Test.JuvixUnit open;
 headMay {A} : List A -> Maybe A := map just >> head nothing;
 
 tests : List Test :=
-  [ testCase "1 == 1" (assertEqual "1 /= 1" 1 1)
-  ; testCase "2 > 1" (assertGreater "2 <= 1" 2 1)
-  ; testCase "2 >= 1" (assertGreaterEqual "2 < 1" 2 1)
-  ; testCase "1 >= 1" (assertGreaterEqual "1 < 1" 1 1)
-  ; testCase "1 < 2" (assertLess "1 >= 2" 1 2)
-  ; testCase "1 <= 2" (assertLessEqual "1 > 2" 1 2)
-  ; testCase "1 <= 1" (assertLessEqual "1 > 1" 1 1)
-  ; testCase "[1] == [1]" (assertEqual "[1] /= [1]" [1] [1])
-  ; testCase "[2] > [1]" (assertGreater "2 <= 1" [2] [1])
-  ; testCase "[2] >= [1]" (assertGreaterEqual "2 < 1" [2] [1])
-  ; testCase "[1] >= [1]" (assertGreaterEqual "1 < 1" [1] [1])
-  ; testCase "[1] < [2]" (assertLess "[1] >= [2]" [1] [2])
-  ; testCase "[1] <= [2]" (assertLessEqual "[1] > [2]" [1] [2])
-  ; testCase "[1] <= [1]" (assertLessEqual "[1] > [1]" [1] [1])
-  ; testCase "length [1] == 1" (assertTrue "length [1] /= 1" (length [1] == 1))
-  ; testCase
-    "headMay [] is nothing"
-    (assertNothing λ {xs := "expected nothing, got: " ++str Show.show xs} (headMay {Nat} []))
-  ; testCase "headMay [1] is just" (assertJust "expected just, got nothing" (headMay [1]))
+  [ testCase "1 == 1" (expectEqual 1 1)
+  ; testCase "2 > 1" (expectGreater 2 1)
+  ; testCase "2 >= 1" (expectGreaterEqual 2 1)
+  ; testCase "1 >= 1" (expectGreaterEqual 1 1)
+  ; testCase "1 < 2" (expectLess 1 2)
+  ; testCase "1 <= 2" (expectLessEqual 1 2)
+  ; testCase "1 <= 1" (expectLessEqual 1 1)
+  ; testCase "[1] == [1]" (expectEqual [1] [1])
+  ; testCase "[2] > [1]" (expectGreater [2] [1])
+  ; testCase "[2] >= [1]" (expectGreaterEqual [2] [1])
+  ; testCase "[1] >= [1]" (expectGreaterEqual [1] [1])
+  ; testCase "[1] < [2]" (expectLess [1] [2])
+  ; testCase "[1] <= [2]" (expectLessEqual [1] [2])
+  ; testCase "[1] <= [1]" (expectLessEqual [1] [1])
+  ; testCase "length [1] == 1" (expectTrue (length [1] == 1))
+  ; testCase "headMay [] is nothing" (expectNothing (headMay {Nat} []))
+  ; testCase "headMay [1] is just 1" (expectJust 1 (headMay [1]))
   ];
 
 main : IO := runTestSuite (testSuite "Example" tests);
