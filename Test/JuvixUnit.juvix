@@ -54,7 +54,7 @@ assertNothing {A} (mkMsg : A -> String) : Maybe A -> Assertion := maybe pass (mk
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 == a2);
 
-assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 >= a2);
+assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 > a2);
 
 assertGreaterEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
   failUnless msg (a1 >= a2);
