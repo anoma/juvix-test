@@ -53,3 +53,12 @@ assertJust {A} (msg : String) : Maybe A -> Assertion := maybe (fail msg) (const 
 assertNothing {A} (mkMsg : A -> String) : Maybe A -> Assertion := maybe pass (mkMsg >> fail);
 
 assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 == a2);
+
+assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 >= a2);
+
+assertGreaterEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
+  failUnless msg (a1 >= a2);
+
+assertLess {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 < a2);
+
+assertLessEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 <= a2);
