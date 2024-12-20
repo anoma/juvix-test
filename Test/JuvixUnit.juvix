@@ -12,18 +12,19 @@ isFail : Assertion -> Bool
   | (fail _) := true;
 
 type Test :=
-  testCase {
+  testCase@{
     name : String;
-    assertion : Assertion
+    assertion : Assertion;
   };
 
 type TestSuite :=
-  testSuite {
+  testSuite@{
     name : String;
-    tests : List Test
+    tests : List Test;
   };
 
-anyFail (suite : TestSuite) : Bool := any (Test.assertion >> isFail) (TestSuite.tests suite);
+anyFail (suite : TestSuite) : Bool :=
+  any (Test.assertion >> isFail) (TestSuite.tests suite);
 
 runTests : List Test -> IO :=
   let
@@ -31,14 +32,21 @@ runTests : List Test -> IO :=
       | pass := "OK"
       | (fail msg) := "FAIL: " ++str msg;
     runTest (t : Test) : IO :=
-      printStringLn (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t));
-  in foldr λ {t acc := runTest t >>> acc} (printString "");
+      printStringLn
+        (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t));
+  in foldr λ{t acc := runTest t >>> acc} (printString "");
 
 runTestSuite (suite : TestSuite) : IO :=
   printStringLn ("Test suite '" ++str TestSuite.name suite ++str "'")
     >>> runTests (TestSuite.tests suite)
-    >>> printStringLn ("All tests from test suite '" ++str TestSuite.name suite ++str "' complete")
-    >>> ite (anyFail suite) (Fail.failwith "Suite failed") (printStringLn "Suite passed");
+    >>> printStringLn
+      ("All tests from test suite '"
+        ++str TestSuite.name suite
+        ++str "' complete")
+    >>> ite
+      (anyFail suite)
+      (Fail.failwith "Suite failed")
+      (printStringLn "Suite passed");
 
 failWhen (msg : String) (b : Bool) : Assertion := ite b (fail msg) pass;
 
@@ -48,27 +56,36 @@ assertTrue : String -> Bool -> Assertion := failUnless;
 
 assertFalse : String -> Bool -> Assertion := failWhen;
 
-assertJust {A} (msg : String) : Maybe A -> Assertion := maybe (fail msg) (const pass);
+assertJust {A} (msg : String) : Maybe A -> Assertion :=
+  maybe (fail msg) (const pass);
 
-assertNothing {A} (mkMsg : A -> String) : Maybe A -> Assertion := maybe pass (mkMsg >> fail);
+assertNothing {A} (mkMsg : A -> String) : Maybe A -> Assertion :=
+  maybe pass (mkMsg >> fail);
 
-assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 == a2);
+assertEqual {A} {{Eq A}} (msg : String) (a1 a2 : A) : Assertion :=
+  failUnless msg (a1 == a2);
 
-assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 > a2);
+assertGreater {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
+  failUnless msg (a1 > a2);
 
 assertGreaterEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
   failUnless msg (a1 >= a2);
 
-assertLess {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 < a2);
+assertLess {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
+  failUnless msg (a1 < a2);
 
-assertLessEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion := failUnless msg (a1 <= a2);
+assertLessEqual {A} {{Ord A}} (msg : String) (a1 a2 : A) : Assertion :=
+  failUnless msg (a1 <= a2);
 
-mkExpectMsg {A} {{Show A}} (actual : A) (msg : String) (expected : A) : String :=
+mkExpectMsg
+  {A} {{Show A}} (actual : A) (msg : String) (expected : A) : String :=
   "Expected " ++str Show.show actual ++str msg ++str Show.show expected;
 
-expectTrue (actual : Bool) : Assertion := assertTrue (mkExpectMsg actual " to be " true) actual;
+expectTrue (actual : Bool) : Assertion :=
+  assertTrue (mkExpectMsg actual " to be " true) actual;
 
-expectFalse (actual : Bool) : Assertion := assertFalse (mkExpectMsg actual " to be " false) actual;
+expectFalse (actual : Bool) : Assertion :=
+  assertFalse (mkExpectMsg actual " to be " false) actual;
 
 expectEqual {A} {{Eq A}} {{Show A}} (expected actual : A) : Assertion :=
   assertEqual (mkExpectMsg actual " == " expected) expected actual;
@@ -86,7 +103,11 @@ expectLessEqual {A} {{Ord A}} {{Show A}} (expected actual : A) : Assertion :=
   assertLessEqual (mkExpectMsg actual " <= " expected) expected actual;
 
 expectJust {A} {{Show A}} (expected : A) (actual : Maybe A) : Assertion :=
-  assertJust (mkExpectMsg "nothing" " to be " ("just " ++str Show.show expected)) actual;
+  assertJust
+    (mkExpectMsg "nothing" " to be " ("just " ++str Show.show expected))
+    actual;
 
 expectNothing {A} {{Show A}} (actual : Maybe A) : Assertion :=
-  assertNothing λ {x := mkExpectMsg ("just " ++str Show.show x) " to be " "nothing"} actual;
+  assertNothing
+    λ{x := mkExpectMsg ("just " ++str Show.show x) " to be " "nothing"}
+    actual;
