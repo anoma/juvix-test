@@ -5,12 +5,5 @@ import PackageDescription.V2 open;
 package : Package :=
   defaultPackage@{
     name := "tests";
-    dependencies :=
-      [
-        path "../";
-        github
-          "anoma"
-          "juvix-stdlib"
-          "ff6d964320d24e3e8010733afcd886a62a56dd70";
-      ];
+    dependencies := [path "../"; github "anoma" "juvix-stdlib" "v0.9.0"];
   };
