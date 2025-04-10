@@ -7,6 +7,8 @@ type Assertion :=
   | pass
   | fail String;
 
+open Assertion public;
+
 isFail : Assertion -> Bool
   | pass := false
   | (fail _) := true;
@@ -17,11 +19,15 @@ type Test :=
     assertion : Assertion;
   };
 
+open Test using {testCase} public;
+
 type TestSuite :=
   testSuite@{
     name : String;
     tests : List Test;
   };
+
+open TestSuite using {testSuite} public;
 
 anyFail (suite : TestSuite) : Bool :=
   any (Test.assertion >> isFail) (TestSuite.tests suite);
