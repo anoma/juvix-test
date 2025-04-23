@@ -1,0 +1,70 @@
+module Ansi;
+
+import Stdlib.Prelude open;
+
+type Ansi := privateMk (List Nat)
+with
+  ansi : Ansi -> String -> String
+    | (privateMk l) str :=
+      let
+        codes : List Nat -> String
+          | [] := ""
+          | [x] := show x
+          | (x :: xs) := show x ++str ";" ++str codes xs;
+      in "\ESC[" ++str codes l ++str "m" ++str str ++str "\ESC[0m";
+
+  append : Ansi -> Ansi -> Ansi
+    | (privateMk l1) (privateMk l2) := privateMk (l1 ++ l2);
+
+  type Color :=
+    | black
+    | red
+    | green
+    | yellow
+    | blue
+    | magenta
+    | cyan
+    | white
+    | default;
+
+  open Color public;
+
+  type Style :=
+    | bold
+    | underline
+    | italic
+    | dim;
+
+  open Style public;
+
+  color (c : Color) : Ansi :=
+    let
+      code :=
+        case c of
+          | black := 30
+          | red := 31
+          | green := 32
+          | yellow := 33
+          | blue := 34
+          | magenta := 35
+          | cyan := 36
+          | white := 37
+          | default := 39;
+
+    in privateMk [code];
+
+  resetCode : Nat := 0;
+
+  style (c : Style) : Ansi :=
+    let
+      code :=
+        case c of
+          | bold := 1
+          | dim := 2
+          | italic := 3
+          | underline := 4;
+
+    in privateMk [code];
+end;
+
+open Ansi using {ansi} public;

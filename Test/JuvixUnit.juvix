@@ -2,6 +2,7 @@ module Test.JuvixUnit;
 
 import Stdlib.Prelude open hiding {fail};
 import Stdlib.Debug.Fail as Fail;
+import Ansi open;
 
 type Assertion :=
   | pass
@@ -14,45 +15,78 @@ isFail : Assertion -> Bool
   | (fail _) := true;
 
 type Test :=
-  testCase@{
+  mk@{
     name : String;
     assertion : Assertion;
   };
 
-open Test using {testCase} public;
+testCase (name : String) (assertion : Assertion) : TestSuite :=
+  TestSuite.single
+    Test.mk@{
+      name;
+      assertion;
+    };
 
 type TestSuite :=
-  testSuite@{
-    name : String;
-    tests : List Test;
-  };
+  | group@{
+      name : String;
+      tests : List TestSuite;
+    }
+  | single@{
+      test : Test;
+    }
+with
 
-open TestSuite using {testSuite} public;
+  name : TestSuite -> String
+    | (group name _) := name
+    | (single t) := Test.name t;
 
-anyFail (suite : TestSuite) : Bool :=
-  any (Test.assertion >> isFail) (TestSuite.tests suite);
+end;
+
+anyFail (s : TestSuite) : Bool := anyFailList [s];
+
+good : String -> String :=
+  ansi (Ansi.append (Ansi.style Ansi.bold) (Ansi.color Ansi.green));
+
+bad : String -> String :=
+  ansi (Ansi.append (Ansi.style Ansi.bold) (Ansi.color Ansi.red));
+
+important : String -> String := ansi (Ansi.style Ansi.bold);
+
+anyFailList : List TestSuite -> Bool
+  | [] := false
+  | (TestSuite.single t :: ts) := isFail (Test.assertion t) || anyFailList ts
+  | (TestSuite.group _ l :: ts) := anyFailList l || anyFailList ts;
 
 runTests : List Test -> IO :=
   let
     showAssertion : Assertion -> String
-      | pass := "OK"
-      | (fail msg) := "FAIL: " ++str msg;
+      | pass := good "OK"
+      | (fail msg) := bad ("FAIL: " ++str msg);
     runTest (t : Test) : IO :=
       printStringLn
         (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t));
   in foldr λ{t acc := runTest t >>> acc} (printString "");
 
+runTestSuites : List TestSuite -> IO :=
+  let
+    go (lvl : Nat) : List TestSuite -> IO
+      | [] := printString ""
+      | (TestSuite.single t :: ts) := runTests [t] >>> go lvl ts
+      | (TestSuite.group name tests :: ts) :=
+        printStringLn ("Test suite " ++str important name)
+          >>> go (1 + lvl) tests
+          >>> printStringLn
+            ("All tests from test suite " ++str important name ++str " complete")
+          >>> go lvl ts;
+  in go 0;
+
 runTestSuite (suite : TestSuite) : IO :=
-  printStringLn ("Test suite '" ++str TestSuite.name suite ++str "'")
-    >>> runTests (TestSuite.tests suite)
-    >>> printStringLn
-      ("All tests from test suite '"
-        ++str TestSuite.name suite
-        ++str "' complete")
+  runTestSuites [suite]
     >>> ite
       (anyFail suite)
-      (Fail.failwith "Suite failed")
-      (printStringLn "Suite passed");
+      (Fail.failwith (bad "Suite failed"))
+      (printStringLn (good "Suite passed"));
 
 failWhen (msg : String) (b : Bool) : Assertion := ite b (fail msg) pass;
 

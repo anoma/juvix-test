@@ -5,7 +5,7 @@ import Test.JuvixUnit open;
 
 headMay {A} : List A -> Maybe A := map just >> head nothing;
 
-tests : List Test :=
+tests : List TestSuite :=
   [
     testCase "1 == 1" (expectEqual 1 1);
     testCase "2 > 1" (expectGreater 2 1);
@@ -26,4 +26,4 @@ tests : List Test :=
     testCase "headMay [1] is just 1" (expectJust 1 (headMay [1]));
   ];
 
-main : IO := runTestSuite (testSuite "Example" tests);
+main : IO := runTestSuite (TestSuite.group "Example" tests);
