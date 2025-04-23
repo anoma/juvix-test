@@ -72,7 +72,7 @@ runTests (lvl : Nat) : List Test -> IO :=
       printStringLn
         (indent
           lvl
-          (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t)));
+          (Test.name t ++str " " ++str showAssertion (Test.assertion t)));
   in foldr λ{t acc := runTest t >>> acc} (printString "");
 
 runTestSuites : List TestSuite -> IO :=
