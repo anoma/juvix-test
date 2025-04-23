@@ -58,26 +58,37 @@ anyFailList : List TestSuite -> Bool
   | (TestSuite.single t :: ts) := isFail (Test.assertion t) || anyFailList ts
   | (TestSuite.group _ l :: ts) := anyFailList l || anyFailList ts;
 
-runTests : List Test -> IO :=
+indent (lvl : Nat) (str : String) : String :=
+  let
+    space := foldl (++str) "" (replicate lvl "  ");
+  in space ++str str;
+
+runTests (lvl : Nat) : List Test -> IO :=
   let
     showAssertion : Assertion -> String
       | pass := good "OK"
       | (fail msg) := bad ("FAIL: " ++str msg);
     runTest (t : Test) : IO :=
       printStringLn
-        (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t));
+        (indent
+          lvl
+          (Test.name t ++str "\t\t" ++str showAssertion (Test.assertion t)));
   in foldr λ{t acc := runTest t >>> acc} (printString "");
 
 runTestSuites : List TestSuite -> IO :=
   let
     go (lvl : Nat) : List TestSuite -> IO
       | [] := printString ""
-      | (TestSuite.single t :: ts) := runTests [t] >>> go lvl ts
+      | (TestSuite.single t :: ts) := runTests lvl [t] >>> go lvl ts
       | (TestSuite.group name tests :: ts) :=
-        printStringLn ("Test suite " ++str important name)
+        printStringLn (indent lvl ("Test suite " ++str important name))
           >>> go (1 + lvl) tests
           >>> printStringLn
-            ("All tests from test suite " ++str important name ++str " complete")
+            (indent
+              lvl
+              ("All tests from test suite "
+                ++str important name
+                ++str " complete"))
           >>> go lvl ts;
   in go 0;
 

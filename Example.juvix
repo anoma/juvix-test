@@ -14,13 +14,17 @@ tests : List TestSuite :=
     testCase "1 < 2" (expectLess 1 2);
     testCase "1 <= 2" (expectLessEqual 1 2);
     testCase "1 <= 1" (expectLessEqual 1 1);
-    testCase "[1] == [1]" (expectEqual [1] [1]);
-    testCase "[2] > [1]" (expectGreater [2] [1]);
-    testCase "[2] >= [1]" (expectGreaterEqual [2] [1]);
-    testCase "[1] >= [1]" (expectGreaterEqual [1] [1]);
-    testCase "[1] < [2]" (expectLess [1] [2]);
-    testCase "[1] <= [2]" (expectLessEqual [1] [2]);
-    testCase "[1] <= [1]" (expectLessEqual [1] [1]);
+    TestSuite.group
+      "Lists"
+      [
+        testCase "[1] == [1]" (expectEqual [1] [1]);
+        testCase "[2] > [1]" (expectGreater [2] [1]);
+        testCase "[2] >= [1]" (expectGreaterEqual [2] [1]);
+        testCase "[1] >= [1]" (expectGreaterEqual [1] [1]);
+        testCase "[1] < [2]" (expectLess [1] [2]);
+        testCase "[1] <= [2]" (expectLessEqual [1] [2]);
+        testCase "[1] <= [1]" (expectLessEqual [1] [1]);
+      ];
     testCase "length [1] == 1" (expectTrue (length [1] == 1));
     testCase "headMay [] is nothing" (expectNothing (headMay {Nat} []));
     testCase "headMay [1] is just 1" (expectJust 1 (headMay [1]));
