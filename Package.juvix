@@ -5,6 +5,6 @@ import PackageDescription.V2 open;
 package : Package :=
   defaultPackage@{
     name := "test";
-    version := mkVersion 0 20 0;
+    version := mkVersion 0 21 0;
     dependencies := [github "anoma" "juvix-stdlib" "v0.11.1"];
   };
