@@ -5,7 +5,7 @@ import Test.JuvixUnit open;
 
 main : IO :=
   runTestSuite
-    (testSuite
+    (TestSuite.group
       "TestFail"
       [
         testCase "2 == 1" (assertEqual "2 /= 1" 2 1);
